@@ -26,8 +26,21 @@ class Program
             using var cmd = new NpgsqlCommand(createTableSql, conn);
             cmd.ExecuteNonQuery();
             Console.WriteLine("테이블 생성 완료 혹은 이미 존재");
-            
-            // 2-2 테이블 출력
+
+            // 3 테이블 출력
+            string listTablesSql = @"
+                select tablename
+                from pg_catalog.pg_tables
+                where schemaname = 'public'";
+
+            using var listCmd = new NpgsqlCommand(listTablesSql, conn);
+            using var reader = listCmd.ExecuteReader();
+
+            Console.WriteLine("\n public 스키마 테이블 목록");
+            while (reader.Read())
+            {
+                Console.WriteLine("- " + reader.GetString(0));
+            }
 
         }
         catch (Exception ex)
